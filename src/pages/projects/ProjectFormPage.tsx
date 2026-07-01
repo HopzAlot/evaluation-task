@@ -66,7 +66,11 @@ export function ProjectFormPage() {
 
     const valid =
       activeStep === 0
-        ? await trigger(['category', 'title', 'description'])
+        ? await trigger(
+            category === 'Other'
+              ? ['category', 'otherTechStack', 'title', 'description']
+              : ['category', 'title', 'description'],
+          )
         : await trigger(stepTwoFields)
 
     if (valid) {
@@ -128,10 +132,20 @@ export function ProjectFormPage() {
                   rules={{ required: 'Category is required' }}
                 />
                 {category === 'Other' ? (
-                  <Alert severity="info">
-                    You selected Other. The next step will show a free text field for
-                    your tech stack.
-                  </Alert>
+                  <FormTextField
+                    control={control}
+                    name="otherTechStack"
+                    label="Other tech stack"
+                    placeholder="Example: WordPress, Canva, Excel"
+                    helperText="Write the tools manually for this project."
+                    rules={{
+                      required: 'Write the tech stack for Other category',
+                      minLength: {
+                        value: 2,
+                        message: 'Tech stack must be at least 2 characters',
+                      },
+                    }}
+                  />
                 ) : null}
                 <FormTextField
                   control={control}
@@ -158,28 +172,7 @@ export function ProjectFormPage() {
 
             {activeStep === 1 ? (
               <Stack spacing={2}>
-                {category === 'Other' ? (
-                  <Stack spacing={1}>
-                    <Alert severity="info">
-                      Other category uses a free text field instead of predefined
-                      tech chips.
-                    </Alert>
-                    <FormTextField
-                      control={control}
-                      name="otherTechStack"
-                      label="Other tech stack"
-                      placeholder="Example: WordPress, Canva, Excel"
-                      helperText="Write the tools manually for this project."
-                      rules={{
-                        required: 'Write the tech stack for Other category',
-                        minLength: {
-                          value: 2,
-                          message: 'Tech stack must be at least 2 characters',
-                        },
-                      }}
-                    />
-                  </Stack>
-                ) : (
+                {category !== 'Other' ? (
                   <FormMultiSelectField
                     control={control}
                     name="techStack"
@@ -190,7 +183,7 @@ export function ProjectFormPage() {
                         value.length > 0 || 'Select at least one technology',
                     }}
                   />
-                )}
+                ) : null}
                 <FormSelectField
                   control={control}
                   name="progressStatus"
