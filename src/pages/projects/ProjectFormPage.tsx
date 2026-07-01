@@ -14,6 +14,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useForm } from 'react-hook-form'
+import type { FieldPath } from 'react-hook-form'
 import { FormDateField } from '../../components/forms/FormDateField'
 import { FormMultiSelectField } from '../../components/forms/FormMultiSelectField'
 import { FormSelectField } from '../../components/forms/FormSelectField'
@@ -58,17 +59,15 @@ export function ProjectFormPage() {
   const techOptions = category ? techStackByCategory[category] : []
 
   async function goNext() {
+    const stepTwoFields: FieldPath<ProjectFormValues>[] =
+      category === 'Other'
+        ? ['otherTechStack', 'progressStatus', 'startDate', 'endDate', 'link']
+        : ['techStack', 'progressStatus', 'startDate', 'endDate', 'link']
+
     const valid =
       activeStep === 0
         ? await trigger(['category', 'title', 'description'])
-        : await trigger([
-            'techStack',
-            'otherTechStack',
-            'progressStatus',
-            'startDate',
-            'endDate',
-            'link',
-          ])
+        : await trigger(stepTwoFields)
 
     if (valid) {
       setActiveStep((step) => step + 1)
@@ -157,9 +156,16 @@ export function ProjectFormPage() {
                   <FormTextField
                     control={control}
                     name="otherTechStack"
-                    label="Tech stack"
-                    placeholder="Write your tools separated by commas"
-                    rules={{ required: 'Tech stack is required for Other category' }}
+                    label="Other tech stack"
+                    placeholder="Example: WordPress, Canva, Excel"
+                    helperText="Because you selected Other, write the tools manually."
+                    rules={{
+                      required: 'Write the tech stack for Other category',
+                      minLength: {
+                        value: 2,
+                        message: 'Tech stack must be at least 2 characters',
+                      },
+                    }}
                   />
                 ) : (
                   <FormMultiSelectField
