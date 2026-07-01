@@ -127,6 +127,12 @@ export function ProjectFormPage() {
                   options={projectCategories}
                   rules={{ required: 'Category is required' }}
                 />
+                {category === 'Other' ? (
+                  <Alert severity="info">
+                    You selected Other. The next step will show a free text field for
+                    your tech stack.
+                  </Alert>
+                ) : null}
                 <FormTextField
                   control={control}
                   name="title"
@@ -153,20 +159,26 @@ export function ProjectFormPage() {
             {activeStep === 1 ? (
               <Stack spacing={2}>
                 {category === 'Other' ? (
-                  <FormTextField
-                    control={control}
-                    name="otherTechStack"
-                    label="Other tech stack"
-                    placeholder="Example: WordPress, Canva, Excel"
-                    helperText="Because you selected Other, write the tools manually."
-                    rules={{
-                      required: 'Write the tech stack for Other category',
-                      minLength: {
-                        value: 2,
-                        message: 'Tech stack must be at least 2 characters',
-                      },
-                    }}
-                  />
+                  <Stack spacing={1}>
+                    <Alert severity="info">
+                      Other category uses a free text field instead of predefined
+                      tech chips.
+                    </Alert>
+                    <FormTextField
+                      control={control}
+                      name="otherTechStack"
+                      label="Other tech stack"
+                      placeholder="Example: WordPress, Canva, Excel"
+                      helperText="Write the tools manually for this project."
+                      rules={{
+                        required: 'Write the tech stack for Other category',
+                        minLength: {
+                          value: 2,
+                          message: 'Tech stack must be at least 2 characters',
+                        },
+                      }}
+                    />
+                  </Stack>
                 ) : (
                   <FormMultiSelectField
                     control={control}
