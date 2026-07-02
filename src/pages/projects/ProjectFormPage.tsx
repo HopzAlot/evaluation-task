@@ -87,8 +87,8 @@ export function ProjectFormPage() {
       return
     }
 
-    const project = addProject(values, user)
-    navigate(`/projects/${project.id}`)
+    addProject(values, user)
+    navigate(ROUTES.PROJECTS)
   }
 
   if (user?.role === 'Admin') {

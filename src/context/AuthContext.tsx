@@ -65,6 +65,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       email: values.email,
       role: values.role,
     })
+    await signOut(auth)
+    setUser(null)
   }
 
   async function login(values: LoginValues) {
