@@ -164,6 +164,9 @@ export function ProjectFormPage() {
                   minRows={3}
                   rules={{
                     required: 'Short description is required',
+                    validate: (value) =>
+                      String(value).trim().split(/\s+/).filter(Boolean).length >=
+                        8 || 'Description must be at least 8 words',
                     maxLength: { value: 220, message: 'Keep it under 220 characters' },
                   }}
                 />
@@ -218,8 +221,8 @@ export function ProjectFormPage() {
                   placeholder="https://github.com/..."
                   rules={{
                     pattern: {
-                      value: /^$|^https?:\/\/.+/,
-                      message: 'Link must start with http:// or https://',
+                      value: /^$|^https:\/\/.+/,
+                      message: 'Link must start with https://',
                     },
                   }}
                 />
