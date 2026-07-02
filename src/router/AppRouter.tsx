@@ -26,13 +26,13 @@ function ProtectedRoutes() {
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth()
+  const { user, loading, registering } = useAuth()
 
   if (loading) {
     return null
   }
 
-  return user ? <Navigate to={ROUTES.DASHBOARD} replace /> : children
+  return user && !registering ? <Navigate to={ROUTES.DASHBOARD} replace /> : children
 }
 
 export function AppRouter() {

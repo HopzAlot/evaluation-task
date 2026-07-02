@@ -19,6 +19,7 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AppUser | null>(null)
   const [loading, setLoading] = useState(Boolean(auth))
+  const [registering, setRegistering] = useState(false)
 
   useEffect(() => {
     if (!auth) {
@@ -52,21 +53,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
       throw new Error('Firebase is not configured. Add VITE Firebase values in .env.')
     }
 
-    const credential = await createUserWithEmailAndPassword(
-      auth,
-      values.email,
-      values.password,
-    )
+    setRegistering(true)
 
-    await updateProfile(credential.user, { displayName: values.name })
-    await saveUserProfile({
-      uid: credential.user.uid,
-      name: values.name,
-      email: values.email,
-      role: values.role,
-    })
-    await signOut(auth)
-    setUser(null)
+    try {
+      const credential = await createUserWithEmailAndPassword(
+        auth,
+        values.email,
+        values.password,
+      )
+
+      await updateProfile(credential.user, { displayName: values.name })
+      await saveUserProfile({
+        uid: credential.user.uid,
+        name: values.name,
+        email: values.email,
+        role: values.role,
+      })
+      await signOut(auth)
+      setUser(null)
+    } finally {
+      setRegistering(false)
+    }
   }
 
   async function login(values: LoginValues) {
@@ -99,7 +106,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, registering, register, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   )
