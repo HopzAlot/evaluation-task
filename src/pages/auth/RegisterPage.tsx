@@ -1,4 +1,11 @@
-import { Alert, Button, Link, MenuItem, Stack } from '@mui/material'
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  Link,
+  MenuItem,
+  Stack,
+} from '@mui/material'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -21,7 +28,12 @@ export function RegisterPage() {
   const navigate = useNavigate()
   const { register } = useAuth()
   const [error, setError] = useState('')
-  const { control, handleSubmit, watch } = useForm<RegisterValues>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { isSubmitting },
+  } = useForm<RegisterValues>({
     defaultValues,
     mode: 'onBlur',
   })
@@ -102,8 +114,16 @@ export function RegisterPage() {
           <MenuItem value="User">User</MenuItem>
           <MenuItem value="Admin">Admin</MenuItem>
         </FormSelectField>
-        <Button type="submit" variant="contained" size="large">
-          Sign up
+        <Button
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={isSubmitting}
+          startIcon={
+            isSubmitting ? <CircularProgress color="inherit" size={18} /> : null
+          }
+        >
+          {isSubmitting ? 'Creating account...' : 'Sign up'}
         </Button>
         <Link component={RouterLink} to={ROUTES.SIGN_IN} sx={{ textAlign: 'center' }}>
           Already have an account? Sign in

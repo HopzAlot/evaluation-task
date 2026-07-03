@@ -1,4 +1,4 @@
-import { Alert, Button, Link, Stack } from '@mui/material'
+import { Alert, Button, CircularProgress, Link, Stack } from '@mui/material'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -12,7 +12,11 @@ export function LoginPage() {
   const navigate = useNavigate()
   const { login } = useAuth()
   const [error, setError] = useState('')
-  const { control, handleSubmit } = useForm<LoginValues>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<LoginValues>({
     defaultValues: { email: '', password: '' },
     mode: 'onBlur',
   })
@@ -57,8 +61,16 @@ export function LoginPage() {
           type="password"
           rules={{ required: 'Password is required' }}
         />
-        <Button type="submit" variant="contained" size="large">
-          Sign in
+        <Button
+          type="submit"
+          variant="contained"
+          size="large"
+          disabled={isSubmitting}
+          startIcon={
+            isSubmitting ? <CircularProgress color="inherit" size={18} /> : null
+          }
+        >
+          {isSubmitting ? 'Signing in...' : 'Sign in'}
         </Button>
         <Link component={RouterLink} to={ROUTES.SIGN_UP} sx={{ textAlign: 'center' }}>
           New here? Create account
